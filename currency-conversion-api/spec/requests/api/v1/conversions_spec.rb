@@ -56,6 +56,114 @@ RSpec.describe "Api::V1::Conversions", type: :request do
       end
     end
 
+    context "with missing parameters" do
+      it "returns 400 when amount is missing" do
+        post "/api/v1/convert", params: { from: "USD", to: "EUR" }
+        expect(response).to have_http_status(:bad_request)
+        expect(JSON.parse(response.body)["errors"]).to include("Missing required parameters: amount, from, and to are required")
+      end
+
+      it "returns 400 when from is missing" do
+        post "/api/v1/convert", params: { amount: "100", to: "EUR" }
+        expect(response).to have_http_status(:bad_request)
+        expect(JSON.parse(response.body)["errors"]).to include("Missing required parameters: amount, from, and to are required")
+      end
+
+      it "returns 400 when to is missing" do
+        post "/api/v1/convert", params: { amount: "100", from: "USD" }
+        expect(response).to have_http_status(:bad_request)
+        expect(JSON.parse(response.body)["errors"]).to include("Missing required parameters: amount, from, and to are required")
+      end
+
+      it "returns 400 when all parameters are missing" do
+        post "/api/v1/convert", params: {}
+        expect(response).to have_http_status(:bad_request)
+        expect(JSON.parse(response.body)["errors"]).to include("Missing required parameters: amount, from, and to are required")
+      end
+
+      it "returns 400 when amount is empty string" do
+        post "/api/v1/convert", params: { amount: "", from: "USD", to: "EUR" }
+        expect(response).to have_http_status(:bad_request)
+        expect(JSON.parse(response.body)["errors"]).to include("Missing required parameters: amount, from, and to are required")
+      end
+
+      it "returns 400 when from is empty string" do
+        post "/api/v1/convert", params: { amount: "100", from: "", to: "EUR" }
+        expect(response).to have_http_status(:bad_request)
+        expect(JSON.parse(response.body)["errors"]).to include("Missing required parameters: amount, from, and to are required")
+      end
+
+      it "returns 400 when to is empty string" do
+        post "/api/v1/convert", params: { amount: "100", from: "USD", to: "" }
+        expect(response).to have_http_status(:bad_request)
+        expect(JSON.parse(response.body)["errors"]).to include("Missing required parameters: amount, from, and to are required")
+      end
+    end
+
+    context "when ConversionService fails" do
+      it "returns 422 with error message when service returns error" do
+        allow(ConversionService).to receive(:convert).and_return({
+          error: true,
+          message: "Failed to fetch exchange rate: Network error"
+        })
+
+        post "/api/v1/convert", params: valid_params
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(JSON.parse(response.body)["errors"]).to include("Failed to fetch exchange rate: Network error")
+      end
+
+      it "returns 422 with error message when service returns API error" do
+        allow(ConversionService).to receive(:convert).and_return({
+          error: true,
+          message: "Failed to fetch exchange rate: Frankfurter error: 404"
+        })
+
+        post "/api/v1/convert", params: valid_params
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(JSON.parse(response.body)["errors"]).to include("Failed to fetch exchange rate: Frankfurter error: 404")
+      end
+
+      it "returns 422 with error message when service returns rate missing error" do
+        allow(ConversionService).to receive(:convert).and_return({
+          error: true,
+          message: "Failed to fetch exchange rate: Rate missing"
+        })
+
+        post "/api/v1/convert", params: valid_params
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(JSON.parse(response.body)["errors"]).to include("Failed to fetch exchange rate: Rate missing")
+      end
+    end
+
+    context "when conversion creation fails" do
+      before do
+        allow(ConversionService).to receive(:convert).and_return({
+          amount: BigDecimal("100.50"),
+          base_currency: "USD",
+          target_currency: "EUR",
+          rate_used: BigDecimal("0.85"),
+          converted_amount: BigDecimal("85.425"),
+          rate_fetched_at: Time.current
+        })
+      end
+
+      it "returns 422 with validation errors when conversion is invalid" do
+        # Create a conversion that will fail validation but has all required attributes
+        invalid_conversion = build(:conversion, base_currency: "INVALID")
+        allow(Conversion).to receive(:create).and_return(invalid_conversion)
+
+        # Mock the validation to fail
+        allow(invalid_conversion).to receive(:valid?).and_return(false)
+        allow(invalid_conversion).to receive(:errors).and_return(
+          double(full_messages: [ "Base currency format is invalid" ])
+        )
+
+        post "/api/v1/convert", params: valid_params
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(JSON.parse(response.body)["errors"]).to include("Base currency format is invalid")
+      end
+    end
+
     context "with edge case parameters" do
       it "handles very small amounts" do
         allow(ConversionService).to receive(:convert).and_return({
