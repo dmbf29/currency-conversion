@@ -1,3 +1,4 @@
+# app/views/api/v1/conversions/_conversion.json.jbuilder
 json.id               conversion.id
 json.amount           conversion.amount.to_s
 json.base_currency    conversion.base_currency
