@@ -9,7 +9,7 @@ module Rates
       url = URI("#{BASE_URL}/latest?from=#{from}&to=#{to}")
       res = Net::HTTP.get_response(url)
       raise "Frankfurter error: #{res.code}" unless res.is_a?(Net::HTTPSuccess)
-      p data = JSON.parse(res.body)
+      data = JSON.parse(res.body)
       rate = data.dig("rates", to)
       date = data["date"]
       raise "Rate missing" unless rate && date

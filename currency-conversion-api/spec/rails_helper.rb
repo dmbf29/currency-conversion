@@ -2,7 +2,7 @@
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
-# Prevent database truncation if the environment is production
+# Prevent database truncation if the environment is running in production mode
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 # Uncomment the line below in case you have `--require rails_helper` in the `.rspec` file
 # that will avoid rails generators crashing because migrations haven't been run yet
@@ -50,7 +50,7 @@ RSpec.configure do |config|
   # for example enabling you to call `get` and `post` in request specs. e.g.:
   #
   #     RSpec.describe UsersController, type: :request do
-  #       # ...
+  #     # ...
   #     end
   #
   # The different available types are documented in the features, such as in
@@ -67,4 +67,7 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  # Include FactoryBot methods
+  config.include FactoryBot::Syntax::Methods
 end
