@@ -1,5 +1,6 @@
 class Api::V1::ConversionsController < ApplicationController
   before_action :validate_required_params, only: [ :create ]
+
   def create
     amount = BigDecimal(conversion_params[:amount])
     from   = conversion_params[:from]
