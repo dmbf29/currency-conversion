@@ -16,7 +16,7 @@ export default function App() {
     setHistError(null);
     setHistLoading(true);
     try {
-      const data = await fetchConversions(20);
+      const data = await fetchConversions();
       setHistory(data);
     } catch (e) {
       setHistError(e.message || "Failed to load history.");

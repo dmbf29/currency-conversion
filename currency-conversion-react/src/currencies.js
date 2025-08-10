@@ -1,3 +1,4 @@
+// Taken from the frankfurter API
 export const CURRENCIES = [
   "AUD",
   "BGN",

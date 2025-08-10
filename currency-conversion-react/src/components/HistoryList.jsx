@@ -1,7 +1,7 @@
 export default function HistoryList({ items, loading, error }) {
   return (
     <div className="mt-6">
-      <h3 className="text-base font-semibold text-gray-800 mb-3">Recent Conversions</h3>
+      <h3 className="text-base font-semibold text-gray-800 mb-3">Last 10 Conversions</h3>
 
       {loading && <div className="text-gray-600">Loading history…</div>}
       {error && <div className="text-red-600">{error}</div>}
@@ -22,7 +22,7 @@ export default function HistoryList({ items, loading, error }) {
               </div>
               <div className="mt-1 text-xs text-gray-600">
                 Rate: <span className="font-mono">{c.rate_used}</span>{" "}
-                • {new Date(c.rate_timestamp).toLocaleString()}
+                • {new Date(c.rate_timestamp).toLocaleDateString()}
               </div>
             </li>
           ))}

@@ -1,7 +1,7 @@
 export default function ResultCard({ result }) {
   if (!result) return null;
 
-  const ts = new Date(result.rate_timestamp).toLocaleString();
+  const ts = new Date(result.rate_timestamp).toLocaleDateString();
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-5 border border-gray-100">
@@ -18,7 +18,7 @@ export default function ResultCard({ result }) {
       </div>
       <div className="mt-2 text-sm text-gray-600">
         <div>Rate used: <span className="font-mono">{result.rate_used}</span></div>
-        <div>Rate timestamp: {ts}</div>
+        <div>Rate published: {ts}</div>
       </div>
     </div>
   );
