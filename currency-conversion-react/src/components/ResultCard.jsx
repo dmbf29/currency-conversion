@@ -4,7 +4,7 @@ export default function ResultCard({ result }) {
   const ts = new Date(result.rate_timestamp).toLocaleDateString();
 
   return (
-    <div className="bg-white rounded-2xl shadow-md p-5 border border-gray-100">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md p-5 border border-gray-100 dark:border-gray-800">
       <div className="flex items-center justify-between">
         <div className="text-lg">
           <span className="font-semibold">
@@ -16,7 +16,7 @@ export default function ResultCard({ result }) {
           </span>
         </div>
       </div>
-      <div className="mt-2 text-sm text-gray-600">
+      <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">
         <div>Rate used: <span className="font-mono">{result.rate_used}</span></div>
         <div>Rate published: {ts}</div>
       </div>

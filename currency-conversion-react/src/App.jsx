@@ -3,6 +3,8 @@ import { postConvert, fetchConversions } from "./api";
 import ConverterForm from "./components/ConverterForm";
 import ResultCard from "./components/ResultCard";
 import HistoryList from "./components/HistoryList";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMoneyBillTransfer } from "@fortawesome/free-solid-svg-icons";
 import "./index.css";
 
 export default function App() {
@@ -42,7 +44,10 @@ export default function App() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold mb-4">Currency Converter</h1>
+      <h1 className="text-2xl font-bold mb-4">
+        <FontAwesomeIcon icon={faMoneyBillTransfer} className="mr-2" aria-hidden="true" />
+        Currency Converter
+      </h1>
       <ConverterForm onSubmit={handleConvert} isSubmitting={isSubmitting} />
       <div className="mt-4">
         <ResultCard result={result} />
