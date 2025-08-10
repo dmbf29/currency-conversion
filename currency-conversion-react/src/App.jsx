@@ -1,35 +1,53 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import { postConvert, fetchConversions } from "./api";
+import ConverterForm from "./components/ConverterForm";
+import ResultCard from "./components/ResultCard";
+import HistoryList from "./components/HistoryList";
+import "./index.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [result, setResult] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [histLoading, setHistLoading] = useState(false);
+  const [histError, setHistError] = useState(null);
+
+  async function loadHistory() {
+    setHistError(null);
+    setHistLoading(true);
+    try {
+      const data = await fetchConversions(20);
+      setHistory(data);
+    } catch (e) {
+      setHistError(e.message || "Failed to load history.");
+    } finally {
+      setHistLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadHistory();
+  }, []);
+
+  async function handleConvert(amount, from, to) {
+    setIsSubmitting(true);
+    try {
+      const data = await postConvert(amount, from, to);
+      setResult(data);
+      await loadHistory();
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="max-w-3xl mx-auto px-4 py-6">
+      <h1 className="text-2xl font-bold mb-4">Currency Converter</h1>
+      <ConverterForm onSubmit={handleConvert} isSubmitting={isSubmitting} />
+      <div className="mt-4">
+        <ResultCard result={result} />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      <HistoryList items={history} loading={histLoading} error={histError} />
+    </div>
+  );
 }
-
-export default App

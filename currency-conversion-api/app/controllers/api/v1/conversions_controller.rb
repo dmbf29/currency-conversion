@@ -2,17 +2,17 @@ class Api::V1::ConversionsController < ApplicationController
   before_action :validate_required_params, only: [ :create ]
 
   def create
-    amount = BigDecimal(conversion_params[:amount])
-    from   = conversion_params[:from]
-    to     = conversion_params[:to]
-
-    conversion_data = ConversionService.convert(amount: amount, from: from.upcase, to: to.upcase)
+    conversion_data = ConversionService.convert(
+      amount: conversion_params[:amount],
+      from: conversion_params[:from],
+      to: conversion_params[:to]
+    )
 
     if conversion_data[:error]
       render json: { errors: [ conversion_data[:message] ] }, status: :unprocessable_content
     else
-      @conversion = Conversion.create(conversion_data)
-      if @conversion.valid?
+      @conversion = Conversion.new(conversion_data)
+      if @conversion.save
         render :create, status: :created
       else
         render json: { errors: @conversion.errors.full_messages }, status: :unprocessable_content
