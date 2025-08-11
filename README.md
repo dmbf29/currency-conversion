@@ -20,13 +20,16 @@ A full-stack currency conversion application, featuring a Rails API backend and 
 - **Deployment**: Heroku
 
 ### Backend Features
-- [☑️] Converts amounts between currencies using live exchange rates from Frankfurter API.
-- [☑️] Caches exchange rates per currency pair in the database for 1 hour to reduce external API calls.
-- [☑️] Stores each conversion record in the database.
-- [☑️] Exposes a `POST /convert` endpoint to perform conversions.
-- [☑️] Exposes a `GET /conversions` endpoint to fetch recent conversion history.
-- [☑️] Includes validations on models (ExchangeRate, Conversion) to ensure data integrity.
-- [☑️] RSpec tests covering model validations and core logic.
+- [☑️] Converts amounts between currencies using live exchange rates from Frankfurter API. (`ConversionsController`)
+- [☑️] Moved the complex controller logic into a Service Object (`ConversionService`)
+- [☑️] Caches exchange rates per currency pair in the database for 1 hour to reduce external API calls. (`Rates::Cache`)
+- [☑️] Stores each conversion record in the database. (`Api::V1::ConversionsController`)
+- [☑️] Namespaced the routes to allow future growth (`api/v1`)
+- [☑️] Exposes a `POST /convert` endpoint to perform conversions. (`Api::V1::ConversionsController`)
+- [☑️] Exposes a `GET /conversions` endpoint to fetch recent conversion history. (`Api::V1::ConversionsController`)
+- [☑️] Includes validations on models to ensure data integrity. (`ExchangeRate`, `Conversion`)
+- [☑️] Moved some of the shared validations between modules into a concern (`CurrencyValidations`)
+- [☑️] RSpec tests covering model validations and core logic. (`models`, `requests`)
 
 ### Frontend (React SPA)
 - **Framework**: React
@@ -35,10 +38,10 @@ A full-stack currency conversion application, featuring a Rails API backend and 
 - **Deployment**: Github Pages
 
 ### Frontend Features
-- [☑️] User interface for amount and currency input
-- [☑️] Backend API integration for conversions
-- [☑️] Display converted amount, exchange rate, and timestamp
-- [☑️] Recent conversions list from backend
+- [☑️] User interface for amount and currency input (`ConverterForm` component)
+- [☑️] Backend API integration for conversions (`api.js`)
+- [☑️] Display converted amount, exchange rate, and timestamp (`ResultCard` component)
+- [☑️] Recent conversions list from backend (`HistoryList` component)
 
 ## API Endpoints
 
@@ -96,7 +99,7 @@ Retrieve recent conversion history.
 ```bash
 cd currency-conversion-api
 bundle install
-rails db:create db:migrate db:seed
+rails db:create db:migrate
 rails server
 ```
 
@@ -126,7 +129,7 @@ bundle exec rspec
 This approach minimizes external API calls while ensuring rate accuracy.
 
 
-## Future Possibly Enhancements
+## Future Possible Enhancements
 - Add `/currencies` endpoint for the API
 - User authentication and personal conversion history
 - Additional currency providers for redundancy
