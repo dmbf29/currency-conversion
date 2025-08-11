@@ -2,7 +2,8 @@
 
 A full-stack currency conversion application, featuring a Rails API backend and React frontend with live exchange rate caching.
 
-🌐 **Live Demo**: [Currency Converter](https://dmbf29.github.io/currency-conversion-react/)
+🌐 **Live Demo**: [Currency Converter](https://dmbf29.github.io/currency-conversion-react/) 👇
+<img width="774" height="528" alt="image" src="https://github.com/user-attachments/assets/a11f4e08-084d-4108-895b-00b3f2390662" />
 
 ## Project Overview
 - **Real-time currency conversion** using live exchange rates
